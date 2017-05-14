@@ -1,0 +1,12 @@
+body {
+	background-color: #eee;
+    padding-top: 70px;
+    height: 100%;
+}
+.text-small{
+	font-size: small;
+}
+footer .navbar{
+	padding-top: 70px;
+	background-color: #eee;
+}

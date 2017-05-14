@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<% include ../partials/head %>
+</head>
+<body>
+    <header>
+        <% include ../partials/header %>
+    </header>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h1><%-title%></h1>
+            </div>
+            <div class="col-lg-12">
+                <table class="table">
+                    <tr>
+                        <th>Date</th>
+                        <th>BTC</th>
+                        <th>DOGE</th>
+                        <th>ETH</th>
+                        <th>LTC</th>
+                        <th>REP</th>
+                    </tr>
+                    <% wallets.forEach(function(wallet) { %>
+                    <tr>
+                        <td><%= wallet.Time %></td>
+                        <td><%= wallet.BTC %></td>
+                        <td><%= wallet.DOGE %></td>
+                        <td><%= wallet.ETH %></td>
+                        <td><%= wallet.LTC %></td>
+                        <td><%= wallet.REP %></td>
+                    </tr>
+                    <% }); %>
+                </table>
+            </div>
+        </div><!-- /.row -->
+    </div><!-- /.container -->
+    <footer>
+        <% include ../partials/footer %>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<% include ../partials/head %>
+</head>
+<body>
+    <header>
+        <% include ../partials/header %>
+    </header>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h1><%-title%></h1>
+            </div>
+            <div class="col-lg-12">
+                <table class="table">
+                  <tr>
+                    <th>Date</th>
+                    <th>BTC</th>
+                    <th>DRL</th>
+                    <th>LTC</th>
+                  </tr>
+                <% minings.forEach(function(mining) { %>
+                   <tr>
+                     <td><%= mining.Date %></td>
+                     <td><%= mining.BTC %></td>
+                     <td><%= mining.DRK %></td>
+                     <td><%= mining.LTC %></td>
+                   </tr>
+                <% }); %>
+                </table>
+            </div>
+        </div><!-- /.row -->
+    </div><!-- /.container -->
+    <footer>
+        <% include ../partials/footer %>
+    </footer>
+</body>
+</html>
