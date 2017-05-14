@@ -7,37 +7,121 @@
     <header>
         <% include ../partials/header %>
     </header>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 text-center">
-                <h1><%-title%></h1>
-            </div>
-            <div class="col-lg-12">
-                <table class="table">
-                    <tr>
-                        <th>Date</th>
-                        <th>BTC</th>
-                        <th>DOGE</th>
-                        <th>ETH</th>
-                        <th>LTC</th>
-                        <th>REP</th>
-                    </tr>
-                    <% wallets.forEach(function(wallet) { %>
-                    <tr>
-                        <td><%= wallet.Time %></td>
-                        <td><%= wallet.BTC %></td>
-                        <td><%= wallet.DOGE %></td>
-                        <td><%= wallet.ETH %></td>
-                        <td><%= wallet.LTC %></td>
-                        <td><%= wallet.REP %></td>
-                    </tr>
-                    <% }); %>
-                </table>
-            </div>
-        </div><!-- /.row -->
-    </div><!-- /.container -->
+    <main>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h1><%-title%></h1>
+                </div>
+                <div class="col-lg-12">
+                    <table class="table">
+                        <tr>
+                            <th>Date</th>
+                            <th>BTC</th>
+                            <th>DOGE</th>
+                            <th>ETH</th>
+                            <th>LTC</th>
+                            <th>REP</th>
+                        </tr>
+                        <% wallets.forEach(function(wallet) { %>
+                        <tr>
+                            <td><%= wallet.Time %></td>
+                            <td><%= wallet.BTC %></td>
+                            <td><%= wallet.DOGE %></td>
+                            <td><%= wallet.ETH %></td>
+                            <td><%= wallet.LTC %></td>
+                            <td><%= wallet.REP %></td>
+                        </tr>
+                        <% }); %>
+                    </table>
+                </div>
+            </div><!-- /.row -->
+            <div class="row">
+                <svg class="svg-chart" width="960" height="500">
+                <!-- placeholder for the chart -->
+                </svg>
+            </div><!-- /.row -->
+        </div><!-- /.container -->
+    </main>
     <footer>
         <% include ../partials/footer %>
     </footer>
+    <script type="text/javascript">
+        // Convert the bitcoins data to the data we can use in DS.js
+        var data = <%- JSON.stringify(wallets) %>;
+        console.log(data);
+        // Draw a line chart
+        var svg = d3.select('svg.svg-chart'),
+          margin = { top: 20, right: 20, bottom: 30, left: 50 },
+          width = +svg.attr('width') - margin.left - margin.right,
+          height = +svg.attr('height') - margin.top - margin.bottom,
+          g = svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+        // Graph title
+        g.append('text')
+        .attr('x', (width / 2))             
+        .attr('y', 0 - (margin.top / 3))
+        .attr('text-anchor', 'middle')  
+        .style('font-size', '16px') 
+        .text('Wallet chart');
+        // Function to convert a string into a time
+        var parseTime = d3.time.format('%Y-%m-%dT%H:%M:%S.%LZ').parse;
+        // Function to show specific time format
+        var formatTime = d3.time.format('%e %B');
+        
+        // Set the X scale
+        var x = d3.time.scale().range([0, width], 0.5);
+        // Set the Y scale
+        var y = d3.scale.linear().range([height, 0]);
+
+        // X-axis contains the time  
+        x.domain(d3.extent(data, function(d) { 
+            return parseTime(d.Time);
+        }));
+        // Y-axis contains the amount 
+        y.domain(d3.extent(data, function(d) { 
+            return d.BTC;
+        }));
+        // Define the line
+        var line = d3.svg.line()
+          .x(function(d) { 
+            return x(parseTime(d.Time)); 
+          })
+          .y(function(d) { 
+            return y(d.BTC); 
+          });
+        // X axis
+        g.append('g')
+            .attr('transform', 'translate(0,' + height + ')')
+            .attr('class', 'x axis')
+            .call(d3.svg.axis().scale(x).orient('bottom').tickFormat(function(d){ return formatTime(d);}))
+        // Y axis
+        g.append('g')
+        .call(d3.svg.axis().scale(y).orient('left'))
+        .append('text')
+        .attr('fill', '#000')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 6)
+        .attr('dy', '0.71em')
+        .attr('text-anchor', 'end')
+        .text('Amount of EUR');
+        // Line
+        g.append('path')
+        .datum(data)
+        .attr('fill', 'none')
+        .attr('stroke', 'steelblue')
+        .attr('stroke-linejoin', 'round')
+        .attr('stroke-linecap', 'round')
+        .attr('stroke-width', 1.5)
+              .attr('d', line);
+        // Add the dots
+        g.selectAll('dot')    
+        .data(data)           
+        .enter().append('circle')                             
+        .attr('r', 3)     
+        .attr('cx', function(d) { return x(parseTime(d.Time)); })      
+        .attr('cy', function(d) { return y(d.BTC); });
+    </script>
+
+
 </body>
 </html>

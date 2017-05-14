@@ -47,7 +47,7 @@ app.get('/mining', function(req, res) {
 });
 // Create the route to the wallet page
 app.get('/wallet', function(req, res) {
-  Wallet.find({}, null, {sort: {'Time':1}}, function (err, wallets){
+  Wallet.find({}, null, {sort: {'Time':-1}}, function (err, wallets){
     console.log(wallets);
     res.render('pages/wallet', { title:'Wallet', wallets: wallets });
   })
