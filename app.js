@@ -40,7 +40,7 @@ app.get('/', function(req, res) {
 });
 // Create the route to the mining page
 app.get('/mining', function(req, res) {
-  Mining.find({}, null, {sort: {'Date':-1}}, function (err, minings){
+  Mining.find({}, null, {sort: {'Date':+1}}, function (err, minings){
     console.log(minings);
     res.render('pages/mining', { title:'Mining', minings: minings });
   })

@@ -7,7 +7,7 @@
     <header>
         <% include ../partials/header %>
     </header>
-    <main>
+    <main class="main wrap">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -49,223 +49,234 @@
         <% include ../partials/footer %>
     </footer>
     <script type="text/javascript">
-        // Convert the bitcoins data to the data we can use in DS.js
-        var data = <%- JSON.stringify(wallets) %>;
-        console.log(data);
-        // Draw a line chart
-        var svg = d3.select('svg.svg-chart'),
-            margin = { top: 20, right: 50, bottom: 30, left: 50 },
-            width = +svg.attr('width') - margin.left - margin.right,
-            height = +svg.attr('height') - margin.top - margin.bottom,
-            g = svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-        // Graph title
-        g.append('text')
-            .attr('x', (width / 2))             
-            .attr('y', 0 - (margin.top / 3))
-            .attr('text-anchor', 'middle')  
-            .style('font-size', '16px') 
-            .text('Wallet chart');
-        // Function to convert a string into a time
-        var parseTime = d3.time.format('%Y-%m-%dT%H:%M:%S.%LZ').parse;
-        // Function to show specific time format
-        var formatTime = d3.time.format('%e %B');
+    // Convert the bitcoins data to the data we can use in DS.js
+    var data = <%- JSON.stringify(wallets) %>;
+    // Draw a line chart
+    var svg = d3.select('svg.svg-chart'),
+        margin = {
+            top: 20,
+            right: 50,
+            bottom: 30,
+            left: 50
+        },
+        width = +svg.attr('width') - margin.left - margin.right,
+        height = +svg.attr('height') - margin.top - margin.bottom,
+        g = svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+    // Graph title
+    g.append('text')
+        .attr('x', (width / 2))
+        .attr('y', 0 - (margin.top / 3))
+        .attr('text-anchor', 'middle')
+        .style('font-size', '16px')
+        .text('Wallet chart');
+    // Function to convert a string into a time
+    var parseTime = d3.time.format('%Y-%m-%dT%H:%M:%S.%LZ').parse;
+    // Function to show specific time format
+    var formatTime = d3.time.format('%e %B');
 
-        // Set the X scale
-        var x = d3.time.scale().range([0, width], 0.5);
-        // Set the Y scale
-        var y = d3.scale.linear().range([height, 0]);
-        // Set the color scale
-        var color = d3.scale.category10();
+    // Set the X scale
+    var x = d3.time.scale().range([0, width], 0.5);
+    // Set the Y scale
+    var y = d3.scale.linear().range([height, 0]);
+    // Set the color scale
+    var color = d3.scale.category10();
 
-        var xAxis = d3.svg.axis()
-          .scale(x)
-          .orient("bottom");
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
 
-        var yAxis = d3.svg.axis()
-          .scale(y)
-          .orient("left");
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left");
 
-        var line = d3.svg.line()
-          // .interpolate("basis")
-          .x(function(d) {
+    var line = d3.svg.line()
+        // .interpolate("basis")
+        .x(function(d) {
             return x(d.date);
-          })
-          .y(function(d) {
+        })
+        .y(function(d) {
             return y(d.worth);
-          });
-        // Select the important columns
-        color.domain(d3.keys(data[0]).filter(function(key) {
-            return key !== "Time" && key !== "_id";
-        }));
-        // Correct the types
-        data.forEach(function(d) {
-          d.date = parseTime(d.Time);
         });
+    // Select the important columns
+    color.domain(d3.keys(data[0]).filter(function(key) {
+        return key !== "Time" && key !== "_id";
+    }));
+    // Correct the types
+    data.forEach(function(d) {
+        d.date = parseTime(d.Time);
+    });
 
-        var currencies = color.domain().map(function(name) {
-          return {
+    var currencies = color.domain().map(function(name) {
+        return {
             name: name,
             values: data.map(function(d) {
-              return {
-                date: d.date,
-                worth: +d[name]
-              };
+                return {
+                    date: d.date,
+                    worth: +d[name]
+                };
             })
-          };
-        });
-        // Set the X domain
-        x.domain(d3.extent(data, function(d) {
-          return d.date;
-        }));
-        // Set the Y domain
-        y.domain([
-          d3.min(currencies, function(c) {
+        };
+    });
+    // Set the X domain
+    x.domain(d3.extent(data, function(d) {
+        return d.date;
+    }));
+    // Set the Y domain
+    y.domain([
+        d3.min(currencies, function(c) {
             return d3.min(c.values, function(v) {
-              return v.worth;
+                return v.worth;
             });
-          }),
-          d3.max(currencies, function(c) {
+        }),
+        d3.max(currencies, function(c) {
             return d3.max(c.values, function(v) {
-              return v.worth;
+                return v.worth;
             });
-          })
-        ]);
-        // Set the X axis
-        g.append("g")
-          .attr("class", "x axis")
-          .attr("transform", "translate(0," + height + ")")
-          .call(xAxis);
-        // Set the Y axis
-        g.append("g")
-          .attr("class", "y axis")
-          .call(yAxis)
-          .append("text")
-          .attr("transform", "rotate(-90)")
-          .attr("y", 6)
-          .attr("dy", ".71em")
-          .style("text-anchor", "end")
-          .text("Value (USD)");
+        })
+    ]);
+    // Set the X axis
+    g.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+    // Set the Y axis
+    g.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Value (USD)");
 
-        // Draw the lines
-        var currency = g.selectAll(".currency")
-          .data(currencies)
-          .enter().append("g")
-          .attr("class", "currency");
+    // Draw the lines
+    var currency = g.selectAll(".currency")
+        .data(currencies)
+        .enter().append("g")
+        .attr("class", "currency");
 
-        currency.append("path")
-          .attr("class", "line")
-          .attr("d", function(d) {
+    currency.append("path")
+        .attr("class", "line")
+        .attr("d", function(d) {
             return line(d.values);
-          })
-          .style("stroke", function(d) {
+        })
+        .style("stroke", function(d) {
             return color(d.name);
-          });
-        // Add the circles
-        currency.append("g").selectAll("circle")
-          .data(function(d){return d.values})
-          .enter()
-          .append("circle")
-          .attr("r", 2)
-          .attr("cx", function(dd){return x(dd.date)})
-          .attr("cy", function(dd){return y(dd.worth)})
-          .attr("fill", "none")
-          .attr("stroke", function(d){return color(this.parentNode.__data__.name)});
-        // Add label to the end of the line
-        currency.append("text")
-          .attr("class", "label")
-          .datum(function (d) {
+        });
+    // Add the circles
+    currency.append("g").selectAll("circle")
+        .data(function(d) {
+            return d.values
+        })
+        .enter()
+        .append("circle")
+        .attr("r", 2)
+        .attr("cx", function(dd) {
+            return x(dd.date)
+        })
+        .attr("cy", function(dd) {
+            return y(dd.worth)
+        })
+        .attr("fill", "none")
+        .attr("stroke", function(d) {
+            return color(this.parentNode.__data__.name)
+        });
+    // Add label to the end of the line
+    currency.append("text")
+        .attr("class", "label")
+        .datum(function(d) {
             return {
-              name: d.name,
-              value: d.values[d.values.length - 1]
+                name: d.name,
+                value: d.values[d.values.length - 1]
             };
-          })
-          .attr("transform", function (d) {
+        })
+        .attr("transform", function(d) {
             return "translate(" + x(d.value.date) + "," + y(d.value.worth) + ")";
-          })
-          .attr("x", 3)
-          .attr("dy", ".35em")
-          .text(function (d) {
+        })
+        .attr("x", 3)
+        .attr("dy", ".35em")
+        .text(function(d) {
             return d.name;
         });
-        // Add the mouse line
-        var mouseG = g.append("g")
-          .attr("class", "mouse-over-effects");
+    // Add the mouse line
+    var mouseG = g.append("g")
+        .attr("class", "mouse-over-effects");
 
-        mouseG.append("path")
-          .attr("class", "mouse-line")
-          .style("stroke", "black")
-          .style("stroke-width", "1px")
-          .style("opacity", "0");
+    mouseG.append("path")
+        .attr("class", "mouse-line")
+        .style("stroke", "black")
+        .style("stroke-width", "1px")
+        .style("opacity", "0");
 
-        var lines = document.getElementsByClassName('line');
+    var lines = document.getElementsByClassName('line');
 
-        var mousePerLine = mouseG.selectAll('.mouse-per-line')
-          .data(currencies)
-          .enter()
-          .append("g")
-          .attr("class", "mouse-per-line");
+    var mousePerLine = mouseG.selectAll('.mouse-per-line')
+        .data(currencies)
+        .enter()
+        .append("g")
+        .attr("class", "mouse-per-line");
 
-        mousePerLine.append("circle")
-          .attr("r", 7)
-          .style("stroke", function (d) {
+    mousePerLine.append("circle")
+        .attr("r", 7)
+        .style("stroke", function(d) {
             return color(d.name);
-          })
-          .style("fill", "none")
-          .style("stroke-width", "2px")
-          .style("opacity", "0");
+        })
+        .style("fill", "none")
+        .style("stroke-width", "2px")
+        .style("opacity", "0");
 
-        mousePerLine.append("text")
-            .attr("class", "hover-text")
-            .attr("dy", "-1em")
-            .attr("transform", "translate(10,3)");
-        
-        // Append a rect to catch mouse movements on canvas
-        mouseG.append('svg:rect') 
-          .attr('width', width) 
-          .attr('height', height)
-          .attr('fill', 'none')
-          .attr('pointer-events', 'all')
-          .on('mouseout', function () { // on mouse out hide line, circles and text
+    mousePerLine.append("text")
+        .attr("class", "hover-text")
+        .attr("dy", "-1em")
+        .attr("transform", "translate(10,3)");
+
+    // Append a rect to catch mouse movements on canvas
+    mouseG.append('svg:rect')
+        .attr('width', width)
+        .attr('height', height)
+        .attr('fill', 'none')
+        .attr('pointer-events', 'all')
+        .on('mouseout', function() { // on mouse out hide line, circles and text
             d3.select(".mouse-line")
-              .style("opacity", "0");
+                .style("opacity", "0");
             d3.selectAll(".mouse-per-line circle")
-              .style("opacity", "0");
+                .style("opacity", "0");
             d3.selectAll(".mouse-per-line text")
-              .style("opacity", "0");
-          })
-          .on('mouseover', function () { // on mouse in show line, circles and text
+                .style("opacity", "0");
+        })
+        .on('mouseover', function() { // on mouse in show line, circles and text
             d3.select(".mouse-line")
-              .style("opacity", "1");
+                .style("opacity", "1");
             d3.selectAll(".mouse-per-line circle")
-              .style("opacity", "1");
+                .style("opacity", "1");
             d3.selectAll(".mouse-per-line text")
-              .style("opacity", "1");
-          })
-          .on('mousemove', function () { // mouse moving over canvas
+                .style("opacity", "1");
+        })
+        .on('mousemove', function() { // mouse moving over canvas
             var mouse = d3.mouse(this);
 
             d3.selectAll(".mouse-per-line")
-              .attr("transform", function (d, i) {
+                .attr("transform", function(d, i) {
 
-                var xDate = x.invert(mouse[0]),
-                  bisect = d3.bisector(function (d) { return d.date; }).left;
-                idx = bisect(d.values, xDate);
+                    var xDate = x.invert(mouse[0]),
+                        bisect = d3.bisector(function(d) {
+                            return d.date;
+                        }).left;
+                    idx = bisect(d.values, xDate);
 
-                d3.select(this).select('text')
-                  .text(y.invert(y(d.values[idx].worth)).toFixed(2));
+                    d3.select(this).select('text')
+                        .text(y.invert(y(d.values[idx].worth)).toFixed(2));
 
-                d3.select(".mouse-line")
-                  .attr("d", function () {
-                    var data = "M" + x(d.values[idx].date) + "," + height;
-                    data += " " + x(d.values[idx].date) + "," + 0;
-                    return data;
-                  });
-                return "translate(" + x(d.values[idx].date) + "," + y(d.values[idx].worth) + ")";
-              });
-          });
-
+                    d3.select(".mouse-line")
+                        .attr("d", function() {
+                            var data = "M" + x(d.values[idx].date) + "," + height;
+                            data += " " + x(d.values[idx].date) + "," + 0;
+                            return data;
+                        });
+                    return "translate(" + x(d.values[idx].date) + "," + y(d.values[idx].worth) + ")";
+                });
+        });
     </script>
-
-
 </body>
 </html>

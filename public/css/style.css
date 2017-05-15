@@ -1,3 +1,94 @@
+html, body{
+    height: 100%;
+}
 body {
+	background-color: #eee;
     padding-top: 70px;
+    padding-bottom: 70px;
+}
+.wrap{
+	min-height: 100%;
+}
+.text-small{
+	font-size: small;
+}
+.chart-container{
+	margin: 0px auto;
+	padding: 40px;
+}
+.main {
+  overflow:auto;
+  padding-bottom:50px; 
+}
+.footer {
+  position: relative;
+  margin-top: -50px;
+  height: 50px;
+  clear:both;
+  padding-top:20px;
+} 
+
+/* Visualization */
+path { 
+	stroke-width: 1;
+	fill: none;
+	stroke-linejoin: round;
+	stroke-linecap: round;
+}
+circle { 
+  stroke-width: 1;
+  fill: steelblue
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: grey;
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.legend, .label, .hover-text{
+	font-size: x-small;
+	background-color: white;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.x.axis path {
+  /*display: none;*/
+}
+.bar:hover {
+  fill: orangered ;
+}
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
 }
